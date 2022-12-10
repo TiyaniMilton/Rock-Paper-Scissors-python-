@@ -1,49 +1,49 @@
 # pylint: disable=invalid-name
-import time
+from time import sleep
 import random
 from dataclasses import dataclass
+import sys
 
 
 @dataclass
 class Game(object):
-    rules = [['rock', 'scissors'], ['paper', 'rock'], ['scissors', 'paper']]
+    choices = {
+        "ROCK": ("SCISSORS", "You win!"),
+        "PAPER": ("ROCK", "You lose!"),
+        "SCISSORS": ("PAPER", "You win!"),
+    }
 
-    def __init__(self) -> None:
+    def __init__(self) -> None:        
         while True:
-            userChoice = input("Rock, Paper or Scissors? ")
-            if any(userChoice in (match := nested_list) for nested_list in self.rules):
-                print("good job!")
-                self.choice = userChoice.upper()
-                self.computerChoice = random.choice(self.rules)
-                self.beats = match[1].upper()
-                break
+            self.choice = input(
+                "Rock, Paper or Scissors? or type ""exit"" to leave the game").upper()
+            if self.choice == "EXIT":
+                sys.exit()
+            elif self.choice not in self.choices:
+                print("Invalid choice. Please try again.")
             else:
-                print("incorrect choice!, please choose the correct choice")
+                self.computerChoice = random.choice(list(self.choices.items()))
+                break
 
     def play(self) -> bool:
-        for index in range(3):
-            print(f"Results in {3-index}...")
-            time.sleep(0.5)
+        for countdown in range(3, 0, -1):
+            print(f"Results in {countdown}...")
+            sleep(0.5)
 
-        if self.choice == self.computerChoice[0].upper():
+        outcome = self.choices.get(self.choice, self.computerChoice[0])
+
+        if self.choice == self.computerChoice[0]:
             print(f"It's a tie game! Your choice: {self.choice} " +
-                  f"The Computers choice: {self.computerChoice[0].upper()}")
-        elif self.choice != self.computerChoice[0].upper() \
-                and self.beats == self.computerChoice[0].upper():
-            print(f"{self.choice}, beats : {self.beats}, you Win!!")
+                  f"The Computers choice: {self.computerChoice[0]}")
         else:
-            print(f"Computer chose {self.computerChoice[0].upper()}, " +
-                  f"which beats : {self.computerChoice[1].upper()}, you Lose!!")
+            print(f"The Computers choice: {self.computerChoice[0]} " +
+                  f"Your choice: {self.choice}: {outcome[1]}")
 
-        time.sleep(1)
-        ask = input("Would you like to play again? y/n : ")
-        if ask == 'y':
-            return True
-        elif ask == 'n':
-            return False
+        sleep(1)
+        ask = input('Would you like to play again? y/n (or anything else) : ')
+        return True if ask == 'y' else False
 
 
-continuePlay = True
-while continuePlay:
-    game = Game()
-    continuePlay = game.play()
+if __name__ == '__main__':
+    for continue_play in iter(lambda: Game().play(), False):
+        pass
