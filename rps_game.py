@@ -1,42 +1,41 @@
 # pylint: disable=invalid-name
 import time
 import random
+from dataclasses import dataclass
 
 
+@dataclass
 class Game(object):
     rules = [['rock', 'scissors'], ['paper', 'rock'], ['scissors', 'paper']]
 
-    def __init__(self):
+    def __init__(self) -> None:
         while True:
             userChoice = input("Rock, Paper or Scissors? ")
             if any(userChoice in (match := nested_list) for nested_list in self.rules):
                 print("good job!")
-                self.choice = userChoice
+                self.choice = userChoice.upper()
                 self.computerChoice = random.choice(self.rules)
-                for item in self.rules:
-                    currentItem = item[0]
-                    if currentItem == self.choice:
-                        self.beats = item[1]
-                        return
+                self.beats = match[1].upper()
+                break
             else:
                 print("incorrect choice!, please choose the correct choice")
 
-    def play(self):
+    def play(self) -> bool:
         for index in range(3):
             print(f"Results in {3-index}...")
             time.sleep(0.5)
 
-        if self.choice.lower() == self.computerChoice[0].lower():
-            print("It's a tie game! Your choice: " + self.choice +
-                  " The Computers choice: " + self.computerChoice[0])
-        elif self.choice.lower() != self.computerChoice[0].lower() and self.beats.lower() == self.computerChoice[0].lower():
-            print(
-                f"{self.choice.lower()}, beats : {self.beats.lower()}, you Win!!")
+        if self.choice == self.computerChoice[0].upper():
+            print(f"It's a tie game! Your choice: {self.choice} " +
+                  f"The Computers choice: {self.computerChoice[0].upper()}")
+        elif self.choice != self.computerChoice[0].upper() \
+                and self.beats == self.computerChoice[0].upper():
+            print(f"{self.choice}, beats : {self.beats}, you Win!!")
         else:
-            print(
-                f"Computer chose {self.computerChoice[0].lower()}, which beats : {self.computerChoice[1].lower()}, you Lose!!")
+            print(f"Computer chose {self.computerChoice[0].upper()}, " +
+                  f"which beats : {self.computerChoice[1].upper()}, you Lose!!")
 
-        time.sleep(1.5)
+        time.sleep(1)
         ask = input("Would you like to play again? y/n : ")
         if ask == 'y':
             return True
